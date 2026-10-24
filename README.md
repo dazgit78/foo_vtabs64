@@ -20,8 +20,29 @@ any existing component and contains no third-party component code.
 - Smooth wheel scrolling and a normal scrollbar
 - Uses the host's colours and tab font, so it follows Default UI dark mode
 
-Add it in Default UI via: right-click > Layout editing mode > replace an element >
-**Utility > Playlist Tabs 64**.
+## Installing and adding it to your layout
+
+1. Build it (see Building below) and install `foo_vtabs64.fb2k-component` via
+   **File > Preferences > Components > Install...**, then restart foobar2000.
+2. The tab panel only switches playlists; it does not show tracks, so it must sit
+   next to a playlist view. The default Default UI layout is a single playlist view,
+   so you need a layout with a second panel.
+3. Easiest way: **View > Layout > Quick setup...** and pick a layout that has a panel
+   to the left of the playlist (for example one with an Album List). This only resets
+   the layout, not your music or playlists.
+4. Turn on **View > Layout > Enable layout editing mode**.
+5. Right-click that left panel, choose **Replace UI Element...**, then
+   **Utility > Playlist Tabs 64**. Drag the divider to set the tab list width.
+6. Turn layout editing mode off.
+
+Building the layout by hand instead: right-click the playlist view in editing mode,
+replace it with **Containers > Splitter (left/right)**, then put Playlist Tabs 64 in the
+left half and **Playlist view** in the right half. Right-click clearly away from the
+divider bar, or you replace the whole splitter.
+
+Known quirk: in layout editing mode this panel does not light up blue or offer
+**Replace UI Element...** when you right-click it. To change or move it, right-click a
+neighbouring panel instead (or reset with Quick setup).
 
 ## Not included
 
@@ -30,9 +51,9 @@ Add it in Default UI via: right-click > Layout editing mode > replace an element
 
 ## Building
 
-Status: the source type-checks cleanly against the real foobar2000 SDK headers, but
-it has NOT been compiled with MSVC or loaded into foobar2000 yet. Expect to fix
-small things on the first real build.
+Status: builds with MSVC through the included GitHub Actions workflow and has been
+loaded and used in foobar2000; the first user reported it works. Not every feature has
+been individually tested.
 
 ### Option A: GitHub Actions (no local setup)
 
