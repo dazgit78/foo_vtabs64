@@ -1,0 +1,44 @@
+name: build
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch foobar2000 SDK sources
+        shell: cmd
+        run: |
+          git clone --depth 1 https://github.com/reupen/foobar2000-sdk-modified.git deps\foobar2000
+          git clone --depth 1 https://github.com/reupen/pfc-modified.git deps\pfc
+
+      - uses: microsoft/setup-msbuild@v2
+
+      - name: Build x64
+        shell: cmd
+        run: msbuild foo_vtabs64.vcxproj /m /p:Configuration=Release /p:Platform=x64 /p:PlatformToolset=v143 /p:SolutionDir=%CD%\build\ /p:SdkRoot=%CD%\deps\
+
+      - name: Build x86
+        shell: cmd
+        run: msbuild foo_vtabs64.vcxproj /m /p:Configuration=Release /p:Platform=Win32 /p:PlatformToolset=v143 /p:SolutionDir=%CD%\build\ /p:SdkRoot=%CD%\deps\
+
+      - name: Package .fb2k-component
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force pkg\x64 | Out-Null
+          Copy-Item build\out\Win32\foo_vtabs64.dll pkg\foo_vtabs64.dll
+          Copy-Item build\out\x64\foo_vtabs64.dll pkg\x64\foo_vtabs64.dll
+          Compress-Archive -Path pkg\* -DestinationPath foo_vtabs64.zip -Force
+          Move-Item foo_vtabs64.zip foo_vtabs64.fb2k-component -Force
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: foo_vtabs64
+          path: |
+            foo_vtabs64.fb2k-component
+            build/out/x64/foo_vtabs64.dll
+            build/out/Win32/foo_vtabs64.dll
